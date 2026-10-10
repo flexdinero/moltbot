@@ -161,3 +161,9 @@
 - Publish: `npm publish --access public --otp="<otp>"` (run from the package dir).
 - Verify without local npmrc side effects: `npm view <pkg> version --userconfig "$(mktemp)"`.
 - Kill the tmux session after publish.
+
+## Cursor Cloud specific instructions
+- Runtime is Node 22 (`package.json` `engines.node` is `>=22.12.0`) and pnpm `10.23.0` (`packageManager`). Install with `CI=true pnpm install --frozen-lockfile --config.engine-strict=false --config.enable-pre-post-scripts=true`, then `pnpm ui:build` so the Control UI exists at `dist/control-ui`. The pnpm warning that `node-llama-cpp` and `core-js` build scripts are ignored is expected.
+- Dev gateway without channel credentials: `CLAWDBOT_SKIP_CHANNELS=1 pnpm moltbot --dev gateway --allow-unconfigured --bind loopback --token "$CLAWDBOT_GATEWAY_TOKEN"`. `--dev` isolates state under `~/.clawdbot-dev` and listens on `ws://127.0.0.1:19001`. Token auth is the default, so set `CLAWDBOT_GATEWAY_TOKEN` or pass `--token` before startup.
+- Control UI: `http://127.0.0.1:19001/?token=<gateway-token>` after `pnpm ui:build`. Health check: `pnpm moltbot --dev health --json`.
+- Checks used in CI and local dev: `pnpm lint`, `pnpm format`, `pnpm build`, `pnpm test`.
